@@ -232,23 +232,164 @@ if __name__ == "__main__":
 
 # --- CHALLENGE EXERCISES ---
 #
-# Exercise 1: Add more cities to the CITIES dictionary
-#             Find coordinates at: https://www.latlong.net/
-#
-# Exercise 2: Create a function that compares prices of multiple cryptos
-#             Display them in a formatted table
-#
-# Exercise 3: Add POST request example
-#             Use: https://jsonplaceholder.typicode.com/posts
-#             Send: requests.post(url, json={"title": "My Post", "body": "Content"})
-#
-# Exercise 4: Save results to a JSON file
-#             import json
-#             with open("results.json", "w") as f:
-#                 json.dump(data, f, indent=2)
-#
-# Exercise 5: Add API key support for OpenWeatherMap
-#             Sign up at: https://openweathermap.org/api
-#             Use environment variables:
-#             import os
-#             api_key = os.environ.get("OPENWEATHER_API_KEY")
+
+"""
+Part 5: Challenge Exercises – Complete Solution
+Difficulty: Intermediate → Advanced
+"""
+
+import requests
+import json
+import os
+import time
+
+# -------------------------------------------------
+# Exercise 1: Cities dictionary (lat/long)
+# -------------------------------------------------
+CITIES = {
+    "delhi": {"lat": 28.61, "lon": 77.23},
+    "mumbai": {"lat": 19.07, "lon": 72.87},
+    "pune": {"lat": 18.52, "lon": 73.85},
+    "bangalore": {"lat": 12.97, "lon": 77.59},
+    "chennai": {"lat": 13.08, "lon": 80.27},
+}
+
+
+def get_weather(city):
+    city = city.lower()
+
+    if city not in CITIES:
+        print("City not found!")
+        return
+
+    lat = CITIES[city]["lat"]
+    lon = CITIES[city]["lon"]
+
+    url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={lat}&longitude={lon}&current_weather=true"
+    )
+
+    response = requests.get(url)
+    data = response.json()
+
+    weather = data["current_weather"]
+    print(f"\nWeather in {city.title()}:")
+    print(f"Temperature: {weather['temperature']}°C")
+    print(f"Wind Speed: {weather['windspeed']} km/h")
+
+    return weather
+
+
+# -------------------------------------------------
+# Exercise 2: Compare crypto prices (table)
+# -------------------------------------------------
+def compare_crypto_prices(coins):
+    print("\n=== Crypto Price Comparison ===\n")
+    results = []
+
+    for coin in coins:
+        url = f"https://api.coinpaprika.com/v1/tickers/{coin}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            results.append({
+                "name": data["name"],
+                "symbol": data["symbol"],
+                "price": data["quotes"]["USD"]["price"]
+            })
+
+    print(f"{'Name':15} {'Symbol':10} {'Price (USD)':>15}")
+    print("-" * 45)
+
+    for r in results:
+        print(f"{r['name']:15} {r['symbol']:10} ${r['price']:>14,.2f}")
+
+    return results
+
+
+# -------------------------------------------------
+# Exercise 3: POST request example
+# -------------------------------------------------
+def create_post():
+    print("\n=== Creating POST ===")
+
+    url = "https://jsonplaceholder.typicode.com/posts"
+    payload = {
+        "title": "My Post",
+        "body": "This is sample content",
+        "userId": 1
+    }
+
+    response = requests.post(url, json=payload)
+    data = response.json()
+
+    print("Post created successfully!")
+    print(data)
+
+    return data
+
+
+# -------------------------------------------------
+# Exercise 4: Save results to JSON file
+# -------------------------------------------------
+def save_to_json(filename, data):
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=2)
+
+    print(f"\nData saved to {filename}")
+
+
+# -------------------------------------------------
+# Exercise 5: OpenWeatherMap API with API key
+# -------------------------------------------------
+def get_weather_with_api_key(city):
+    api_key = os.environ.get("OPENWEATHER_API_KEY")
+
+    if not api_key:
+        print("API key not found in environment variables.")
+        return
+
+    url = (
+        f"https://api.openweathermap.org/data/2.5/weather"
+        f"?q={city}&appid={api_key}&units=metric"
+    )
+
+    response = requests.get(url)
+    data = response.json()
+
+    if response.status_code == 200:
+        print(f"\nWeather in {city.title()}:")
+        print(f"Temperature: {data['main']['temp']}°C")
+        print(f"Humidity: {data['main']['humidity']}%")
+    else:
+        print("Failed to fetch weather.")
+
+
+# -------------------------------------------------
+# MAIN
+# -------------------------------------------------
+def main():
+    weather = get_weather("pune")
+
+    cryptos = compare_crypto_prices([
+        "btc-bitcoin",
+        "eth-ethereum",
+        "doge-dogecoin"
+    ])
+
+    post = create_post()
+
+    save_to_json("results.json", {
+        "weather": weather,
+        "cryptos": cryptos,
+        "post": post
+    })
+
+    # Requires API key setup
+    get_weather_with_api_key("Mumbai")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,34 @@
+{
+  "weather": {
+    "time": "2026-01-06T09:30",
+    "interval": 900,
+    "temperature": 28.4,
+    "windspeed": 10.2,
+    "winddirection": 80,
+    "is_day": 1,
+    "weathercode": 1
+  },
+  "cryptos": [
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "price": 93460.02026235055
+    },
+    {
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "price": 3224.6195379828423
+    },
+    {
+      "name": "Dogecoin",
+      "symbol": "DOGE",
+      "price": 0.15042148179297968
+    }
+  ],
+  "post": {
+    "title": "My Post",
+    "body": "This is sample content",
+    "userId": 1,
+    "id": 101
+  }
+}
