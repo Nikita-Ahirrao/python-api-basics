@@ -11,7 +11,7 @@ We'll use JSONPlaceholder - a free fake API for testing.
 import requests
 
 # Step 1: Define the API URL
-url = "https://www.aileela.com/course/deep-learning-full-stack-deployment/learn?chapter=flask-basics"
+url = "https://jsonplaceholder.typicode.com/posts/1"
 
 # Step 2: Make a GET request
 response = requests.get(url)
